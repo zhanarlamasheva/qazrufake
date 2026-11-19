@@ -1,5 +1,7 @@
 # QazRuFake: a Kazakh–Russian benchmark of fact-checked claims and news posts
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24373378.svg)](https://doi.org/10.5281/zenodo.24373378)
+
 QazRuFake is a corpus of **7,213 short texts in Russian (3,866) and Kazakh (3,347)** for fake news detection in Kazakhstan's bilingual information space. Every FAKE item is a claim that circulated in Kazakhstan and was rated false by a Kazakhstani fact-checking organisation. The repository also contains grouped train/dev/test splits, claim-only versions of all texts, model predictions and the code for every experiment in the accompanying paper.
 
 > **Paper:** *How collection design shapes fake news detection scores: a Kazakh–Russian benchmark of fact-checked claims and news posts* (under review). Citation details will be added on publication.
@@ -117,4 +119,16 @@ FAKE items repeat false claims, including health-related ones. Do not republish 
 
 ## Citation
 
-To be added on publication.
+Until the paper is published, please cite the dataset:
+
+```bibtex
+@dataset{lamasheva_2026_qazrufake,
+  author    = {Lamasheva, Zhanar},
+  title     = {{QazRuFake: a Kazakh-Russian benchmark of fact-checked claims and news posts for fake news detection}},
+  year      = {2026},
+  version   = {1.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24373378},
+  url       = {https://doi.org/10.5281/zenodo.24373378}
+}
+```
