@@ -1,0 +1,7 @@
+numpy
+scipy
+pandas
+scikit-learn>=1.3
+matplotlib
+openpyxl
+# transformer notebooks (GPU): transformers, datasets, accelerate, sentence-transformers

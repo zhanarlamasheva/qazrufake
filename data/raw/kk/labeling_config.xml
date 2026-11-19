@@ -1,0 +1,250 @@
+<View>
+  <Style>
+    .annotation-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .meta-box {
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      background: #f7f7f7;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .title-box {
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      background: #ffffff;
+      border-left: 4px solid #444444;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .text-box {
+      padding: 16px;
+      margin-bottom: 18px;
+      background: #fafafa;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .annotation-section {
+      padding: 14px 16px;
+      margin-top: 16px;
+      background: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+    }
+
+    .fake-section {
+      padding: 14px 16px;
+      margin-top: 16px;
+      background: #fff8f7;
+      border: 1px solid #e5b8b0;
+      border-radius: 8px;
+    }
+
+    .real-section {
+      padding: 14px 16px;
+      margin-top: 16px;
+      background: #f6fbf7;
+      border: 1px solid #b9d8c0;
+      border-radius: 8px;
+    }
+  </Style>
+
+  <View className="annotation-container">
+
+    <Header value="Разметка новостей"/>
+
+    <!-- NEWS METADATA -->
+    <View className="meta-box">
+      <Header value="Метаданные NEWS"/>
+
+      <Text name="category_meta" value="Категория: $category"/>
+      <Text name="news_id_meta" value="NEWS_ID: $news_id"/>
+      <Text name="language_meta" value="LANGUAGE: $language"/>
+      <Text name="date_news_meta" value="DATE_NEWS: $date_news"/>
+      <Text name="source_name_meta" value="SOURCE_NAME: $source_name"/>
+      <Text name="url_meta" value="URL: $url"/>
+    </View>
+
+    <!-- TITLE -->
+    <Header value="Title"/>
+    <View className="title-box">
+      <Text name="news_title" value="$title"/>
+    </View>
+
+    <!-- MAIN TEXT -->
+    <Header value="Текст новости"/>
+    <View className="text-box">
+      <Text name="news_text" value="$text"/>
+    </View>
+
+    <!-- REAL_OR_FAKE -->
+    <View className="annotation-section">
+      <Header value="REAL_OR_FAKE"/>
+      <Header value="Выберите основную целевую метку текста."/>
+
+      <Choices
+        name="real_or_fake"
+        toName="news_text"
+        choice="single"
+        showInLine="true"
+        required="true"
+      >
+        <Choice value="REAL"/>
+        <Choice value="FAKE"/>
+      </Choices>
+    </View>
+
+    <!-- SOURCE_TYPE -->
+    <View className="annotation-section">
+      <Header value="SOURCE_TYPE"/>
+      <Header value="Укажите тип источника, в котором опубликован или распространён материал."/>
+
+      <Choices
+        name="source_type"
+        toName="news_text"
+        choice="single"
+        required="true"
+      >
+        <Choice value="official_source" alias="Официальный источник"/>
+        <Choice value="media" alias="СМИ / новостное издание"/>
+        <Choice value="factcheck_source" alias="Фактчекинговый ресурс"/>
+        <Choice value="social_media" alias="Социальная сеть"/>
+        <Choice value="telegram_channel" alias="Telegram-канал"/>
+        <Choice value="unknown" alias="Источник неизвестен"/>
+      </Choices>
+    </View>
+
+    <!-- CONFIDENCE -->
+    <View className="annotation-section">
+      <Header value="CONFIDENCE"/>
+      <Header value="1 — өте күмәнді, 2 — күмән бар, 3 — орташа, 4 — сенімді, 5 — толық сенімді."/>
+
+      <Choices
+        name="confidence"
+        toName="news_text"
+        choice="single"
+        showInLine="true"
+        required="true"
+      >
+        <Choice value="1"/>
+        <Choice value="2"/>
+        <Choice value="3"/>
+        <Choice value="4"/>
+        <Choice value="5"/>
+      </Choices>
+    </View>
+
+    <!-- FAKE_NEWS BLOCK -->
+    <View
+      className="fake-section"
+      visibleWhen="choice-selected"
+      whenTagName="real_or_fake"
+      whenChoiceValue="FAKE"
+    >
+      <Header value="FAKE_NEWS"/>
+
+      <Header value="FAKE_TYPE"/>
+      <Header value="Выберите один основной тип фейковой новости."/>
+
+      <Choices
+        name="fake_type"
+        toName="news_text"
+        choice="single"
+        required="true"
+      >
+        <Choice value="conspiracy_theory" alias="Теория заговора"/>
+        <Choice value="fabricated_news" alias="Полностью выдуманная новость"/>
+        <Choice value="satire_or_parody" alias="Сатира или пародия"/>
+        <Choice value="misleading_content" alias="Вводящий в заблуждение контент"/>
+        <Choice value="manipulated_content" alias="Манипулированный контент"/>
+        <Choice value="false_context" alias="Ложный контекст"/>
+        <Choice value="false_connection" alias="Ложная связка"/>
+        <Choice value="imposter_content" alias="Имитация официального источника"/>
+        <Choice value="deepfake_synthetic_media" alias="AI-подделка аудио, видео или изображения"/>
+        <Choice value="propaganda" alias="Пропаганда"/>
+        <Choice value="advertising_disguised" alias="Реклама или PR, замаскированные под новость"/>
+        <Choice value="hoax" alias="Мистификация или вброс"/>
+        <Choice value="rumor" alias="Слух или неподтверждённая информация"/>
+      </Choices>
+
+      <Header value="DISINFORMATION_TECHNIQUE"/>
+      <Header value="Выберите одну или несколько основных техник дезинформации. Level2 подтипы не размечаются."/>
+
+      <Choices
+        name="disinformation_technique"
+        toName="news_text"
+        choice="multiple"
+        required="true"
+      >
+        <Choice value="clickbait" alias="Кликбейт"/>
+        <Choice value="emotional_pressure" alias="Эмоциональное давление"/>
+        <Choice value="exaggeration" alias="Преувеличение"/>
+        <Choice value="downplaying" alias="Приуменьшение"/>
+        <Choice value="scapegoating" alias="Поиск виноватого"/>
+        <Choice value="misattribution" alias="Ложная атрибуция"/>
+        <Choice value="none_detected" alias="Техника не выявлена"/>
+      </Choices>
+    </View>
+
+    <!-- REAL_NEWS BLOCK -->
+    <View
+      className="real-section"
+      visibleWhen="choice-selected"
+      whenTagName="real_or_fake"
+      whenChoiceValue="REAL"
+    >
+      <Header value="REAL_NEWS"/>
+
+      <Header value="SOURCE_CREDIBILITY"/>
+      <Header value="Оцените надёжность источника."/>
+
+      <Choices
+        name="source_credibility"
+        toName="news_text"
+        choice="single"
+        showInLine="true"
+        required="true"
+      >
+        <Choice value="low" alias="Низкая"/>
+        <Choice value="medium" alias="Средняя"/>
+        <Choice value="high" alias="Высокая"/>
+      </Choices>
+
+      <Header value="EVIDENCE"/>
+      <TextArea
+        name="evidence"
+        toName="news_text"
+        placeholder="Краткое доказательство истинности"
+        rows="3"
+        required="false"
+      />
+    </View>
+
+    <!-- NOTES -->
+    <View className="annotation-section">
+      <Header value="NOTES"/>
+      <Header value="Кратко обоснуйте выбранную метку. Для сложного примера укажите причину сомнений."/>
+
+      <TextArea
+        name="notes"
+        toName="news_text"
+        placeholder="Краткое обоснование решения"
+        rows="4"
+        required="false"
+      />
+    </View>
+
+  </View>
+</View>

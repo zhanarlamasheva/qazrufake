@@ -1,0 +1,16 @@
+QazRuFake data licence
+
+The annotations, labels, splits, groupings, claim-only texts, model predictions,
+embeddings and results in this repository (everything under data/, annotation/,
+predictions/ and results/, except the source texts themselves) are licensed under
+the Creative Commons Attribution-NonCommercial 4.0 International licence
+(CC BY-NC 4.0): https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+The source texts remain the property of their original publishers (Factcheck.kz,
+Kazinform, Aqparat Saqshysy, NoFake.kz, Tengrinews.kz and the Kazakh-language news
+outlets named in the data). They are included for non-commercial research use only
+and are not covered by the CC BY-NC 4.0 grant. Rights holders who want material
+removed can open an issue in this repository.
+
+The code in src/, notebooks/ and annotation/*.py is licensed under the MIT licence
+(see LICENSE).
