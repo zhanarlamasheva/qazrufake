@@ -1,0 +1,13 @@
+{
+  "title": "QazRuFake: a Kazakh-Russian benchmark of fact-checked claims and news posts for fake news detection",
+  "upload_type": "dataset",
+  "description": "<p>QazRuFake is a corpus of 7,213 short texts in Russian (3,866) and Kazakh (3,347) for fake news detection in Kazakhstan's bilingual information space. Every FAKE item is a claim that circulated in Kazakhstan and was rated false by a Kazakhstani fact-checking organisation (Factcheck.kz, Kazinform, Aqparat Saqshysy, NoFake.kz). REAL items combine claims rated true by Factcheck.kz, news reports from fact-checking outlets and news posts (Tengrinews.kz, Kazakh-language outlets); the label basis of every source is documented.</p><p>The release contains grouped train/dev/test splits, original fact-checker verdicts, claim-only versions of all texts with channel and framing removed, fine-grained fake-news type and technique labels with a double-annotated agreement sample, per-item SVM and XLM-R predictions, LaBSE embeddings, and code for all experiments.</p><p>Licence: annotations, splits and derived data CC BY-NC 4.0; code MIT; source texts remain the property of their publishers and are included for non-commercial research use.</p>",
+  "creators": [
+    {"name": "Lamasheva, Zhanar"}
+  ],
+  "license": "cc-by-nc-4.0",
+  "access_right": "open",
+  "keywords": ["fake news detection", "misinformation", "fact-checking", "Kazakh", "Russian", "low-resource languages", "dataset bias", "shortcut learning"],
+  "language": "eng",
+  "version": "1.0"
+}
