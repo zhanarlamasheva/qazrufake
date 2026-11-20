@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24373378.svg)](https://doi.org/10.5281/zenodo.24373378)
 
-QazRuFake is a corpus of **7,213 short texts in Russian (3,866) and Kazakh (3,347)** for fake news detection in Kazakhstan's bilingual information space. Every FAKE item is a claim that circulated in Kazakhstan and was rated false by a Kazakhstani fact-checking organisation. The repository also contains grouped train/dev/test splits, claim-only versions of all texts, model predictions and the code for every experiment in the accompanying paper.
+QazRuFake is a corpus of **7,213 short texts in Russian (3,866) and Kazakh (3,347)** for fake news detection in Kazakhstan's bilingual information space. Its 3,133 FAKE items are claims checked by Kazakhstani fact-checking organisations and assigned to FAKE by documented corpus rules: Russian claims debunked by the outlet, and Kazakh Factcheck.kz claims with verdicts false, fake, mostly false or manipulation (505 of the 1,267 Kazakh FAKE items are manipulation verdicts). The repository also contains grouped train/dev/test splits, claim-only versions of all texts, model predictions and the code for every experiment in the accompanying paper.
 
 > **Paper:** *How collection design shapes fake news detection scores: a Kazakh–Russian benchmark of fact-checked claims and news posts* (under review). Citation details will be added on publication.
 
@@ -10,7 +10,7 @@ QazRuFake is a corpus of **7,213 short texts in Russian (3,866) and Kazakh (3,34
 
 - **The REAL class is heterogeneous.** It combines claims rated true by Factcheck.kz (Kazakh), news reports published by fact-checking outlets (Russian), and ordinary news posts (Tengrinews.kz Telegram, Kazakh-language outlets). Only the Kazakh Factcheck.kz items have both labels assigned by the same procedure. See [Label basis](#label-basis).
 - **Texts are restatements, not original posts.** FAKE items are the fact-checker's summary of a claim, often with its circulation context. Models trained on them learn claim summaries, not raw social-media text.
-- **Standard-split scores are inflated by collection artefacts.** In Russian, the source name alone gives macro-F1 0.905. We recommend reporting the same-publisher, unambiguous-verdict and claim-only evaluations alongside the standard split (see [Recommended evaluations](#recommended-evaluations)).
+- **Standard-split scores are inflated by collection artefacts.** In Russian, the source name alone gives macro-F1 0.905. Report the four-row evaluation protocol and QazRuFake-Core alongside the standard split (see [Evaluation protocol](#recommended-evaluations)).
 - **Fine-grained labels have low inter-annotator agreement** (Cohen's κ 0.11–0.46). Treat `fake_type` and `technique` as exploratory, single-annotator metadata.
 
 ## Composition
@@ -43,10 +43,12 @@ data/
   raw/ru, raw/kk           # original Label Studio exports and labelling config
 annotation/
   double_annotation_295.csv            # linguist vs fact-checker labels on 295 FAKE items
-  double_annotation_sample.xlsx, first_annotation_key.csv, agreement.py
+  double_annotation_sample.xlsx, first_annotation_key.csv, agreement.py (κ from the CSV)
 predictions/
   svm_wordchar_predictions.json        # per-item SVM predictions (test sets)
   xlmr_base_predictions.jsonl          # per-item XLM-R probabilities, 9 settings x 3 seeds
+  xlmr_v3_predictions.jsonl            # XLM-R trained on Russian fact-checking outlets, 3 seeds
+  llm_zeroshot_predictions.jsonl       # zero-shot Qwen2.5-7B-Instruct, P(FAKE) per test item
   labse_embeddings.npz                 # LaBSE embeddings of all texts (duplicate checks)
 results/                   # every number reported in the paper, as JSON
 figures/                   # paper figures
@@ -87,7 +89,17 @@ Macro-F1 on the test split. SVM: linear SVM over word 1–2-grams and character 
 | Kazakh Factcheck.kz, unambiguous verdicts, claim-only | 0.814 | 0.831 ± 0.003 |
 | Zero-shot RU → KK / KK → RU (char n-gram SVM) | 0.442 / 0.468 | 0.766 / 0.782 |
 
-<a name="recommended-evaluations"></a>**Recommended evaluations:** (1) the standard split; (2) the Kazakh Factcheck.kz unambiguous subset with `claim` text (train and test on `unamb`); (3) Russian with the test set restricted to fact-checking outlets; (4) the Kazakh temporal split (train ≤ 2023, test ≥ 2024). Use group-level bootstrap for confidence intervals.
+<a name="recommended-evaluations"></a>**Evaluation protocol.** Report these four rows alongside any headline score (paper, Table 10), and QazRuFake-Core as the headline evaluation:
+
+| Row | What it removes | SVM (RU / KK) | XLM-R (RU / KK) | Zero-shot LLM (RU / KK) |
+| --- | --- | --- | --- | --- |
+| 1. Standard split | nothing (reference) | 0.955 / 0.824 | 0.967 / 0.830 | 0.809 / 0.620 |
+| 2. Metadata-only probe (best of source name, source type, date) | the text | 0.905 / 0.755 | – | – |
+| 3. Same publisher (train and test only on publishers with both labels) | publisher and register differences | 0.825 / 0.811 | 0.886 / 0.813 | 0.658 / 0.587 |
+| 4. Claim-only text, within row 3 | fact-checker framing, channel and rebuttal cues | 0.694 / 0.738 | 0.650* / 0.765 | 0.632 / 0.641 |
+| **QazRuFake-Core**: Kazakh Factcheck.kz, unambiguous verdicts (`unamb`), `claim` text | graded verdicts | – / 0.814 | – / 0.831 | – / 0.669 |
+
+Use group-level bootstrap for confidence intervals. The Kazakh temporal split (train ≤ 2023, test ≥ 2024) is a useful robustness check. \* One of three XLM-R seeds collapsed to the majority class (other seeds 0.799, 0.696). Zero-shot LLM: Qwen2.5-7B-Instruct, 4-bit, not trained. `notebooks/qazrufake_v3.ipynb` produced these XLM-R and LLM rows (`predictions/xlmr_v3_predictions.jsonl`, `predictions/llm_zeroshot_predictions.jsonl`; `src/analyze_v3.py` → `results/res_v3.json`); `src/fig_protocol.py` draws Figure 1.
 
 ## Reproducing
 
@@ -103,9 +115,11 @@ python src/xling.py           # anchor-based bilingual duplicate candidates
 python src/exp_rev.py         # claim-only, unambiguous, temporal, duplicate sensitivity; SVM predictions
 python src/analyze_v2.py predictions/xlmr_base_predictions.jsonl predictions/labse_embeddings.npz
 python src/analyze_v2_extra.py
+python src/analyze_v3.py predictions/xlmr_v3_predictions.jsonl predictions/llm_zeroshot_predictions.jsonl
+python src/fig_protocol.py     # Figure 1 (evaluation protocol)
 ```
 
-All scripts run from the repository root. `prep.py` + `make_corpus.py` reproduce `data/qazrufake.jsonl` exactly. Transformer fine-tuning needs a GPU: open `notebooks/qazrufake_v2.ipynb` in Google Colab (T4), upload `data/qazrufake.jsonl` and run all cells.
+All scripts run from the repository root. `prep.py` + `make_corpus.py` reproduce `data/qazrufake.jsonl` exactly. Transformer fine-tuning needs a GPU: open `notebooks/qazrufake_v2.ipynb` (and `qazrufake_v3.ipynb` for the same-publisher XLM-R rows and the zero-shot LLM) in Google Colab (T4), upload `data/qazrufake.jsonl` and run all cells.
 
 ## Licence
 
@@ -126,7 +140,7 @@ Until the paper is published, please cite the dataset:
   author    = {Lamasheva, Zhanar},
   title     = {{QazRuFake: a Kazakh-Russian benchmark of fact-checked claims and news posts for fake news detection}},
   year      = {2026},
-  version   = {1.0},
+  version   = {1.1},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.24373378},
   url       = {https://doi.org/10.5281/zenodo.24373378}
