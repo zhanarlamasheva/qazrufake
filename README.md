@@ -4,7 +4,7 @@
 
 QazRuFake is a corpus of **7,213 short texts in Russian (3,866) and Kazakh (3,347)** for fake news detection in Kazakhstan's bilingual information space. Its 3,133 FAKE items are claims checked by Kazakhstani fact-checking organisations and assigned to FAKE by documented corpus rules: Russian claims debunked by the outlet, and Kazakh Factcheck.kz claims with verdicts false, fake, mostly false or manipulation (505 of the 1,267 Kazakh FAKE items are manipulation verdicts). The repository also contains grouped train/dev/test splits, claim-only versions of all texts, model predictions and the code for every experiment in the accompanying paper.
 
-> **Paper:** *How collection design shapes fake news detection scores: a Kazakh–Russian benchmark of fact-checked claims and news posts* (under review). Citation details will be added on publication.
+> **Paper:** *Separating veracity from collection artefacts in fake news detection: a bilingual benchmark from Kazakhstan and an evaluation protocol* (under review). Citation details will be added on publication.
 
 ## Read this before using the data
 
@@ -48,7 +48,9 @@ predictions/
   svm_wordchar_predictions.json        # per-item SVM predictions (test sets)
   xlmr_base_predictions.jsonl          # per-item XLM-R probabilities, 9 settings x 3 seeds
   xlmr_v3_predictions.jsonl            # XLM-R trained on Russian fact-checking outlets, 3 seeds
-  llm_zeroshot_predictions.jsonl       # zero-shot Qwen2.5-7B-Instruct, P(FAKE) per test item
+  llm_zeroshot_predictions.jsonl       # zero-shot Qwen2.5-7B-Instruct, English prompt, P(FAKE) per test item
+  xlmr_v4_classweighted_predictions.jsonl   # XLM-R, class-weighted loss, protocol rows, 5-10 seeds
+  llm_v4_qwen14b_native_predictions.jsonl   # zero-shot Qwen2.5-14B-Instruct, prompt in the text's language, dev + test
   labse_embeddings.npz                 # LaBSE embeddings of all texts (duplicate checks)
 results/                   # every number reported in the paper, as JSON
 figures/                   # paper figures
@@ -89,17 +91,19 @@ Macro-F1 on the test split. SVM: linear SVM over word 1–2-grams and character 
 | Kazakh Factcheck.kz, unambiguous verdicts, claim-only | 0.814 | 0.831 ± 0.003 |
 | Zero-shot RU → KK / KK → RU (char n-gram SVM) | 0.442 / 0.468 | 0.766 / 0.782 |
 
-<a name="recommended-evaluations"></a>**Evaluation protocol.** Report these four rows alongside any headline score (paper, Table 10), and QazRuFake-Core as the headline evaluation:
+<a name="recommended-evaluations"></a>**Evaluation protocol.** Report these four rows alongside any headline score (paper, Table 12), and QazRuFake-Core as the headline evaluation. XLM-R: class-weighted loss, mean over 5 seeds (10 for row 4 RU and Core). LLM: Qwen2.5-14B-Instruct, prompt in the language of the text, threshold chosen on dev.
 
 | Row | What it removes | SVM (RU / KK) | XLM-R (RU / KK) | Zero-shot LLM (RU / KK) |
 | --- | --- | --- | --- | --- |
-| 1. Standard split | nothing (reference) | 0.955 / 0.824 | 0.967 / 0.830 | 0.809 / 0.620 |
+| 1. Standard split | nothing (reference) | 0.955 / 0.824 | 0.965 / 0.831 | 0.808 / 0.726 |
 | 2. Metadata-only probe (best of source name, source type, date) | the text | 0.905 / 0.755 | – | – |
-| 3. Same publisher (train and test only on publishers with both labels) | publisher and register differences | 0.825 / 0.811 | 0.886 / 0.813 | 0.658 / 0.587 |
-| 4. Claim-only text, within row 3 | fact-checker framing, channel and rebuttal cues | 0.694 / 0.738 | 0.650* / 0.765 | 0.632 / 0.641 |
-| **QazRuFake-Core**: Kazakh Factcheck.kz, unambiguous verdicts (`unamb`), `claim` text | graded verdicts | – / 0.814 | – / 0.831 | – / 0.669 |
+| 3. Same publisher (train and test only on publishers with both labels) | publisher and register differences | 0.825 / 0.811 | 0.913 / 0.804 | 0.663 / 0.707 |
+| 4. Claim-only text, within row 3 | fact-checker framing, channel and rebuttal cues | 0.694 / 0.738 | 0.722 / 0.777 | 0.674 / 0.679 |
+| **QazRuFake-Core**: Kazakh Factcheck.kz, unambiguous verdicts (`unamb`), `claim` text | graded verdicts | – / 0.814 | – / 0.824 | – / 0.757 |
 
-Use group-level bootstrap for confidence intervals. The Kazakh temporal split (train ≤ 2023, test ≥ 2024) is a useful robustness check. \* One of three XLM-R seeds collapsed to the majority class (other seeds 0.799, 0.696). Zero-shot LLM: Qwen2.5-7B-Instruct, 4-bit, not trained. `notebooks/qazrufake_v3.ipynb` produced these XLM-R and LLM rows (`predictions/xlmr_v3_predictions.jsonl`, `predictions/llm_zeroshot_predictions.jsonl`; `src/analyze_v3.py` → `results/res_v3.json`); `src/fig_protocol.py` draws Figure 1.
+Use group-level bootstrap for confidence intervals, and report ROC-AUC next to macro-F1 when a row changes the class balance. The Kazakh temporal split (train ≤ 2023, test ≥ 2024) is a useful robustness check. Controls in the paper (Table 9): balancing the training set leaves the Russian drop unchanged (ROC-AUC 0.988 → 0.961 → 0.854), while cutting original texts to claim-only length explains part of the claim-only loss in Russian and all of it in Kazakh. Without class weights, one of three XLM-R seeds collapsed on row 4 RU (0.650 ± 0.177); see `results/res_v4.json` and the paper's Appendix A.
+
+**External corpus.** `src/external_fnn.py` applies the protocol to FakeNewsNet titles (PolitiFact, GossipCop; CSVs from github.com/KaiDMML/FakeNewsNet): the publisher domain alone gives 0.819 vs 0.859 for a title SVM on PolitiFact, while GossipCop keeps its score under same-publisher evaluation (0.769 vs 0.778).
 
 ## Reproducing
 
@@ -116,6 +120,9 @@ python src/exp_rev.py         # claim-only, unambiguous, temporal, duplicate sen
 python src/analyze_v2.py predictions/xlmr_base_predictions.jsonl predictions/labse_embeddings.npz
 python src/analyze_v2_extra.py
 python src/analyze_v3.py predictions/xlmr_v3_predictions.jsonl predictions/llm_zeroshot_predictions.jsonl
+python src/analyze_r3.py      # ROC-AUC, balanced-test, class-balance, training-size and length controls (Table 9)
+python src/external_fnn.py <dir with FakeNewsNet CSVs>   # protocol on FakeNewsNet (Table 11)
+python src/analyze_v4.py      # class-weighted XLM-R and Qwen2.5-14B reruns (Tables 7, 12, A2)
 python src/fig_protocol.py     # Figure 1 (evaluation protocol)
 ```
 

@@ -1,0 +1,242 @@
+{
+ "politifact": {
+  "n_raw": 1056,
+  "n_used": 992,
+  "n_domains": 466,
+  "n_domains_both_labels": 18,
+  "share_items_from_both_label_domains": 0.248,
+  "mixed_label_title_groups": 2,
+  "top_domains_real": {
+   "youtube.com": 47,
+   "nytimes.com": 30,
+   "whitehouse.gov": 28,
+   "politifact.com": 25,
+   "go.com": 25
+  },
+  "top_domains_fake": {
+   "yournewswire.com": 15,
+   "trendolizer.com": 13,
+   "facebook.com": 6,
+   "uspoln.com": 5,
+   "thegatewaypundit.com": 5
+  },
+  "standard": {
+   "n": 194,
+   "n_real": 120,
+   "n_fake": 74,
+   "f1m": 0.859,
+   "f1_ci": [
+    0.805,
+    0.909
+   ],
+   "auc": 0.92,
+   "auc_ci": [
+    0.879,
+    0.957
+   ],
+   "majority_f1m": 0.382
+  },
+  "metadata_probe_domain": {
+   "n": 194,
+   "n_real": 120,
+   "n_fake": 74,
+   "f1m": 0.819,
+   "f1_ci": [
+    0.753,
+    0.875
+   ],
+   "auc": 0.901,
+   "auc_ci": [
+    0.863,
+    0.937
+   ],
+   "majority_f1m": 0.382,
+   "test_domain_seen_in_train": 0.608
+  },
+  "test_restricted": {
+   "n": 40,
+   "n_real": 37,
+   "n_fake": 3,
+   "f1m": 0.42,
+   "f1_ci": [
+    0.367,
+    0.461
+   ],
+   "auc": 0.477,
+   "auc_ci": [
+    0.262,
+    0.676
+   ],
+   "majority_f1m": 0.481
+  },
+  "same_publisher": {
+   "n": 40,
+   "n_real": 37,
+   "n_fake": 3,
+   "f1m": 0.467,
+   "f1_ci": [
+    0.433,
+    0.494
+   ],
+   "auc": 0.532,
+   "auc_ci": [
+    0.357,
+    0.711
+   ],
+   "majority_f1m": 0.481
+  },
+  "same_publisher_metadata_probe": {
+   "n": 40,
+   "n_real": 37,
+   "n_fake": 3,
+   "f1m": 0.549,
+   "f1_ci": [
+    0.394,
+    0.738
+   ],
+   "auc": 0.595,
+   "auc_ci": [
+    0.025,
+    1.0
+   ],
+   "majority_f1m": 0.481,
+   "test_domain_seen_in_train": 1.0
+  },
+  "publisher_disjoint": {
+   "n": 51,
+   "n_real": 33,
+   "n_fake": 18,
+   "f1m": 0.855,
+   "f1_ci": [
+    0.735,
+    0.944
+   ],
+   "auc": 0.919,
+   "auc_ci": [
+    0.81,
+    0.989
+   ],
+   "majority_f1m": 0.393
+  }
+ },
+ "gossipcop": {
+  "n_raw": 22140,
+  "n_used": 21871,
+  "n_domains": 1882,
+  "n_domains_both_labels": 398,
+  "share_items_from_both_label_domains": 0.781,
+  "mixed_label_title_groups": 122,
+  "top_domains_real": {
+   "people.com": 1571,
+   "dailymail.co.uk": 770,
+   "wikipedia.org": 621,
+   "etonline.com": 586,
+   "usmagazine.com": 562
+  },
+  "top_domains_fake": {
+   "hollywoodlife.com": 460,
+   "people.com": 216,
+   "dailymail.co.uk": 194,
+   "radaronline.com": 174,
+   "eonline.com": 154
+  },
+  "standard": {
+   "n": 4405,
+   "n_real": 3362,
+   "n_fake": 1043,
+   "f1m": 0.778,
+   "f1_ci": [
+    0.761,
+    0.794
+   ],
+   "auc": 0.869,
+   "auc_ci": [
+    0.855,
+    0.883
+   ],
+   "majority_f1m": 0.433
+  },
+  "metadata_probe_domain": {
+   "n": 4405,
+   "n_real": 3362,
+   "n_fake": 1043,
+   "f1m": 0.707,
+   "f1_ci": [
+    0.69,
+    0.724
+   ],
+   "auc": 0.785,
+   "auc_ci": [
+    0.767,
+    0.803
+   ],
+   "majority_f1m": 0.433,
+   "test_domain_seen_in_train": 0.942
+  },
+  "test_restricted": {
+   "n": 3432,
+   "n_real": 2544,
+   "n_fake": 888,
+   "f1m": 0.77,
+   "f1_ci": [
+    0.753,
+    0.787
+   ],
+   "auc": 0.864,
+   "auc_ci": [
+    0.848,
+    0.878
+   ],
+   "majority_f1m": 0.426
+  },
+  "same_publisher": {
+   "n": 3432,
+   "n_real": 2544,
+   "n_fake": 888,
+   "f1m": 0.769,
+   "f1_ci": [
+    0.751,
+    0.785
+   ],
+   "auc": 0.859,
+   "auc_ci": [
+    0.843,
+    0.873
+   ],
+   "majority_f1m": 0.426
+  },
+  "same_publisher_metadata_probe": {
+   "n": 3432,
+   "n_real": 2544,
+   "n_fake": 888,
+   "f1m": 0.676,
+   "f1_ci": [
+    0.657,
+    0.694
+   ],
+   "auc": 0.731,
+   "auc_ci": [
+    0.708,
+    0.754
+   ],
+   "majority_f1m": 0.426,
+   "test_domain_seen_in_train": 0.999
+  },
+  "publisher_disjoint": {
+   "n": 957,
+   "n_real": 688,
+   "n_fake": 269,
+   "f1m": 0.802,
+   "f1_ci": [
+    0.771,
+    0.831
+   ],
+   "auc": 0.901,
+   "auc_ci": [
+    0.876,
+    0.922
+   ],
+   "majority_f1m": 0.418
+  }
+ }
+}
