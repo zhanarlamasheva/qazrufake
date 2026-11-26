@@ -4,7 +4,7 @@
 
 QazRuFake is a corpus of **7,213 short texts in Russian (3,866) and Kazakh (3,347)** for fake news detection in Kazakhstan's bilingual information space. Its 3,133 FAKE items are claims checked by Kazakhstani fact-checking organisations and assigned to FAKE by documented corpus rules: Russian claims debunked by the outlet, and Kazakh Factcheck.kz claims with verdicts false, fake, mostly false or manipulation (505 of the 1,267 Kazakh FAKE items are manipulation verdicts). The repository also contains grouped train/dev/test splits, claim-only versions of all texts, model predictions and the code for every experiment in the accompanying paper.
 
-> **Paper:** *Separating veracity from collection artefacts in fake news detection: a bilingual benchmark from Kazakhstan and an evaluation protocol* (under review). Citation details will be added on publication.
+> **Paper:** *Separating Veracity from Collection Artefacts in Fake News Detection: A Kazakh–Russian Benchmark and an Evaluation Protocol* (under review). Citation details will be added on publication.
 
 ## Read this before using the data
 
